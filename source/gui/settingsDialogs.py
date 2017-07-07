@@ -286,7 +286,6 @@ class MultiCategorySettingsDialog(SettingsDialog):
 		# So, make sure that there is a real panel to activate
 		if self.currentCategory:
 			self.currentCategory.onPanelActivated()
-			self.SetTitle("{dialogTitle}: {panelTitle}".format(dialogTitle=self.title,panelTitle=self.currentCategory.title))
 
 	def onOk(	self,evt):
 		for panel in self.getCategoryInstances():
@@ -1863,7 +1862,7 @@ class BrailleSettingsPanel(SettingsPanel):
 
 class NVDASettingsDialog(MultiCategorySettingsDialog):
 	# Translators: This is the label for the NVDA settings dialog.
-	title = _("NVDA Settings")
+	title = _("NVDA")
 	categoryClasses=[
 		GeneralSettingsPanel,
 		SynthesizerPanel,
@@ -1877,6 +1876,15 @@ class NVDASettingsDialog(MultiCategorySettingsDialog):
 		BrowseModePanel,
 		DocumentFormattingPanel,
 	]
+
+	def onCategoryChange(self,evt):
+		super(NVDASettingsDialog,self).onCategoryChange(evt)
+		if self.currentCategory:
+			activeConfigProfile=config.conf.profiles[-1].name
+			if not activeConfigProfile or isinstance(self.currentCategory,GeneralSettingsPanel):
+				# Translators: The profile name for normal configuration
+				activeConfigProfile=_("normal configuration")
+			self.SetTitle("{dialogTitle}: {panelTitle} ({configProfile})".format(dialogTitle=self.title,panelTitle=self.currentCategory.title,configProfile=activeConfigProfile))
 
 class AddSymbolDialog(wx.Dialog):
 
